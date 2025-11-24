@@ -17,15 +17,15 @@ if (!flock($lockFile, LOCK_EX | LOCK_NB)) {
 	exit;
 }
 
-if (!isset($_GET['secret']) || !isset($_GET['pcname'])) {
+if (!isset($_GET['token']) || !isset($_GET['pcname'])) {
 	header('HTTP/1.1 400 Bad Request');
 	exit;
 }
 
-$secret = trim($_GET['secret']);
+$token = trim($_GET['token']);
 $pcname = trim($_GET['pcname']);
 
-if (strlen($secret) < 1 || strlen($pcname) < 1) {
+if (strlen($token) < 1 || strlen($pcname) < 1) {
 	header('HTTP/1.1 400 Bad Request');
 	exit;
 }
@@ -35,7 +35,7 @@ if (strlen($pcname) > 40 || !preg_match('/^[a-zA-Z0-9_\-]+$/', $pcname)) {
 	exit;
 }
 
-if (!password_verify($secret, $REGISTRATION_HASH)) {
+if (!password_verify($token, $REGISTRATION_HASH)) {
 	header('HTTP/1.1 401 Unauthorized');
 	exit;
 }

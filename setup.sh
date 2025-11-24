@@ -36,7 +36,7 @@ WG_EASY_USERNAME="$word$(($RANDOM % 10000))"
 WG_EASY_PASSWORD="$(openssl rand -base64 30)"
 
 REGISTRATION_TOKEN="$(openssl rand -hex 30)"
-REGISTRATION_HASH="$(mkpasswd --method=bcrypt "$PASS" --rounds 14)"
+REGISTRATION_HASH="$(mkpasswd --method=bcrypt "$REGISTRATION_TOKEN" --rounds 14)"
 
 # write .env
 echo "SERVICE_FQDN=$FQDN" > .env
