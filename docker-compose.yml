@@ -109,6 +109,9 @@ services:
       - "traefik.http.routers.registration.tls=true"
       - "traefik.http.routers.registration.tls.certresolver=letsencrypt"
       - "traefik.http.routers.registration.service=registration-svc"
+        # Strip /registration prefix before forwarding to container
+      - "traefik.http.middlewares.registration-strip-prefix.stripprefix.prefixes=/registration"
+      - "traefik.http.routers.registration.middlewares=registration-strip-prefix"
       # Optional HTTP redirect
       - "traefik.http.routers.registration-http.rule=Host(`${SERVICE_FQDN}`) && PathPrefix(`/registration`)"
       - "traefik.http.routers.registration-http.entrypoints=web"
