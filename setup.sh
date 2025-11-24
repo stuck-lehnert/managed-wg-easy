@@ -28,7 +28,6 @@ if [[ -z "$LETSENCRYPT_EMAIL" ]]; then exit 1; fi
 while true; do
     word=$(shuf -n 1 /usr/share/dict/words)
     if [[ $word =~ ^[a-zA-Z]+$ ]]; then
-        echo "Found word: $word"
         break
     fi
 done
@@ -49,16 +48,7 @@ echo "WG_EASY_PASSWORD=$WG_EASY_PASSWORD" >> .env
 echo >> .env
 echo "REGISTRATION_HASH=$REGISTRATION_HASH" >> .env
 
-# inform about credentials
-echo "Your dashboard credentials are: (admin, $INIT_PASSWORD)"
-echo "Do not change them, it would break the registration setup!"
-echo
-echo "Your registration token is $REGISTRATION_TOKEN"
-echo "Your registration url is https://$SERVICE_FQDN/registration/issue.php?token=$REGISTRATION_TOKEN&pcname=<PC NAME>"
-echo "Write it down! You will not get a second chance to look at it."
 
-
-echo
 echo "Starting service..."
 mkdir -p traefik/
 touch traefik/acme.json && chmod 600 traefik/acme.json
@@ -66,3 +56,12 @@ touch traefik/acme.json && chmod 600 traefik/acme.json
 export INIT_ENABLED="true";
 docker compose up -d
 
+
+# inform about credentials
+echo
+echo "Your dashboard credentials are: ($WG_EASY_USERNAME, $WG_EASY_PASSWORD)"
+echo "Do not change them, it would break the registration setup!"
+echo
+echo "Your registration token is $REGISTRATION_TOKEN"
+echo "Your registration url is https://$FQDN/registration/issue.php?token=$REGISTRATION_TOKEN&pcname=<PC NAME>"
+echo "Write it down! You will not get a second chance to look at it."
