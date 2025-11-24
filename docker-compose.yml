@@ -35,6 +35,7 @@ services:
         
     environment:
       LANG: "en"
+      PORT: 80
       WG_HOST: "${SERVICE_FQDN}"
       WG_PORT: 51820
       PASSWORD_HASH: "${PASSWORD_HASH}"
@@ -45,7 +46,6 @@ services:
 
     ports:
       - "51820:51820/udp"
-      - "51821:51821/tcp"
     
     cap_add:
       - NET_ADMIN
