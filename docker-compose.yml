@@ -68,7 +68,7 @@ services:
       - "traefik.http.routers.wg-easy.tls.certresolver=letsencrypt"
       - "traefik.http.routers.wg-easy.service=wg-easy-svc"
       # HTTP router -> redirect to HTTPS
-      - "traefik.http.routers.wg-easy-http.rule=Host(`${SERVICE_FQDN`)"
+      - "traefik.http.routers.wg-easy-http.rule=Host(`${SERVICE_FQDN}`)"
       - "traefik.http.routers.wg-easy-http.entrypoints=web"
       - "traefik.http.routers.wg-easy-http.middlewares=wg-easy-https-redirect"
       # Redirect middleware
