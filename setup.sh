@@ -24,6 +24,11 @@ read LETSENCRYPT_EMAIL
 echo -e "\e[0m" 
 if [[ -z "$LETSENCRYPT_EMAIL" ]]; then exit 1; fi
 
+echo -ne "What DNS servers would you like to use (csv; e.g. \`1.1.1.1,8.8.8.8\`)? \e[38;5;208m"
+read DNS
+echo -e "\e[0m" 
+if [[ -z "$DNS" ]]; then exit 1; fi
+
 # pick a random word as the username
 while true; do
     word=$(shuf -n 1 /usr/share/dict/words)
@@ -54,6 +59,7 @@ mkdir -p traefik/
 touch traefik/acme.json && chmod 600 traefik/acme.json
 
 export INIT_ENABLED="true";
+export INIT_DNS="$DNS";
 docker compose up -d
 
 

@@ -44,7 +44,7 @@ services:
       INIT_USERNAME: "${WG_EASY_USERNAME}"
       INIT_PASSWORD: "${WG_EASY_PASSWORD}"
       INIT_HOST: "${SERVICE_FQDN}"
-      INIT_DNS: "9.9.9.9,149.112.112.112"
+      INIT_DNS: "${INIT_DNS}"
 
     volumes:
       - ./wireguard:/etc/wireguard
@@ -92,11 +92,10 @@ services:
       - wg
 
     environment:
-      SERVICE_FQDN: "${SERVICE_FQDN}"
       REGISTRATION_HASH: "${REGISTRATION_HASH}"
+      WG_EASY_IPV4: "10.42.42.42"
       WG_EASY_USERNAME: "${WG_EASY_USERNAME}"
       WG_EASY_PASSWORD: "${WG_EASY_PASSWORD}"
-      
 
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
