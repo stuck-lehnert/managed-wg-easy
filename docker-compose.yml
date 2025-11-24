@@ -2,6 +2,8 @@ services:
   traefik:
     image: docker.io/library/traefik:v3.1
     container_name: traefik
+    networks:
+      - wg
     command:
       # Core
       - "--providers.docker=true"
@@ -32,7 +34,7 @@ services:
       wg:
         ipv4_address: '10.42.42.42'
         ipv6_address: 'fdcc:ad94:bacf:61a3::2a'
-        
+
     environment:
       LANG: "en"
       PORT: 80
@@ -46,7 +48,7 @@ services:
 
     ports:
       - "51820:51820/udp"
-    
+
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -86,3 +88,4 @@ networks:
       config:
         - subnet: 10.42.42.0/24
         - subnet: fdcc:ad94:bacf:61a3::/64
+        
