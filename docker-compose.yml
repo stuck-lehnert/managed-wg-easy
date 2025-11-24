@@ -1,0 +1,89 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: docker.io/library/traefik:v3.1
+    container_name: traefik
+    command:
+      # Core
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # Entry points
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/acme.json:/letsencrypt/acme.json"
+
+    restart: unless-stopped
+
+  wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:latest
+    container_name: wg-easy
+    networks:
+      wg:
+        ipv4_address: '10.42.42.42'
+        ipv6_address: 'fdcc:ad94:bacf:61a3::2a'
+        
+    environment:
+      LANG: "en"
+      WG_HOST: "${SERVICE_FQDN}"
+      WG_PORT: 51820
+      PASSWORD_HASH: "${PASSWORD_HASH}"
+
+    volumes:
+      - ./wireguard:/etc/wireguard
+      - /lib/modules:/lib/modules:ro
+
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.default.forwarding=1
+
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router
+      - "traefik.http.routers.wg-easy.rule=Host(`${SERVICE_FQDN}`)"
+      - "traefik.http.routers.wg-easy.entrypoints=websecure"
+      - "traefik.http.routers.wg-easy.tls=true"
+      - "traefik.http.routers.wg-easy.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wg-easy.service=wg-easy-svc"
+      # HTTP router -> redirect to HTTPS
+      - "traefik.http.routers.wg-easy-http.rule=Host(`${SERVICE_FQDN`)"
+      - "traefik.http.routers.wg-easy-http.entrypoints=web"
+      - "traefik.http.routers.wg-easy-http.middlewares=wg-easy-https-redirect"
+      # Redirect middleware
+      - "traefik.http.middlewares.wg-easy-https-redirect.redirectscheme.scheme=https"
+      # Service definition: tell Traefik which port wg-easy listens on inside the container
+      - "traefik.http.services.wg-easy-svc.loadbalancer.server.port=80"
+
+    restart: unless-stopped
+
+networks:
+  wg:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.42.42.0/24
+        - subnet: fdcc:ad94:bacf:61a3::/64
