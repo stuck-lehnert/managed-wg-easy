@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# !!! run `apt install docker.io docker-compose-v2 whois` beforehand
+
 cd "$(dirname "$0")"
 
 set -e
