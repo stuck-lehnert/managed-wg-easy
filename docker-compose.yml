@@ -40,9 +40,9 @@ services:
       PORT: 80
       INSECURE: true
 
-      INIT_ENABLED: true
-      INIT_USERNAME: admin
-      INIT_PASSWORD: "${INIT_PASSWORD}"
+      INIT_ENABLED: "${INIT_ENABLED:-false}"
+      INIT_USERNAME: "${WG_EASY_USERNAME}"
+      INIT_PASSWORD: "${WG_EASY_PASSWORD}"
       INIT_HOST: "${SERVICE_FQDN}"
       INIT_DNS: "9.9.9.9,149.112.112.112"
 
@@ -80,6 +80,42 @@ services:
       - "traefik.http.middlewares.wg-easy-https-redirect.redirectscheme.scheme=https"
       # Service definition: tell Traefik which port wg-easy listens on inside the container
       - "traefik.http.services.wg-easy-svc.loadbalancer.server.port=80"
+
+    restart: unless-stopped
+
+  registration:
+    build:
+      context: .
+      dockerfile: registration.Dockerfile
+    container_name: registration
+    networks:
+      - wg
+
+    environment:
+      SERVICE_FQDN: "${SERVICE_FQDN}"
+      REGISTRATION_HASH: "${REGISTRATION_HASH}"
+      WG_EASY_USERNAME: "${WG_EASY_USERNAME}"
+      WG_EASY_PASSWORD: "${WG_EASY_PASSWORD}"
+      
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      
+    labels:
+      - "traefik.enable=true"
+      # HTTPS router for registration subpath
+      - "traefik.http.routers.registration.rule=Host(`${SERVICE_FQDN}`) && PathPrefix(`/registration`)"
+      - "traefik.http.routers.registration.entrypoints=websecure"
+      - "traefik.http.routers.registration.tls=true"
+      - "traefik.http.routers.registration.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.registration.service=registration-svc"
+      # Optional HTTP redirect
+      - "traefik.http.routers.registration-http.rule=Host(`${SERVICE_FQDN}`) && PathPrefix(`/registration`)"
+      - "traefik.http.routers.registration-http.entrypoints=web"
+      - "traefik.http.routers.registration-http.middlewares=registration-https-redirect"
+      - "traefik.http.middlewares.registration-https-redirect.redirectscheme.scheme=https"
+      # Service definition: tell Traefik which port registration listens on inside the container
+      - "traefik.http.services.registration-svc.loadbalancer.server.port=80"
 
     restart: unless-stopped
 
