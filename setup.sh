@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# !!! run `apt install docker.io docker-compose-v2 whois` beforehand
+# !!! run `apt install docker.io docker-compose-v2` beforehand
 
 cd "$(dirname "$0")"
 
@@ -20,15 +20,13 @@ read LETSENCRYPT_EMAIL
 echo -e "\e[0m" 
 if [[ -z "$LETSENCRYPT_EMAIL" ]]; then exit 1; fi
 
-PASS="$(openssl rand -base64 30)"
-HASH="$(mkpasswd --method=bcrypt "$PASS" --rounds 14)"
-
+INIT_PASSWORD="$(openssl rand -base64 21)"
 
 echo "SERVICE_FQDN=$FQDN" > .env
 echo "LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL" >> .env
-echo "PASSWORD_HASH='$HASH'" >> .env
+echo "INIT_PASSWORD='$INIT_PASSWORD'" >> .env
 
-echo "Your generated password is $PASS"
+echo "Your credentials are: (admin, $PASS)"
 echo "Write it down! You will not get a second chance to look at it."
 
 mkdir -p traefik/
