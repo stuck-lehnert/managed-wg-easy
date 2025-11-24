@@ -26,7 +26,7 @@ echo "SERVICE_FQDN=$FQDN" > .env
 echo "LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL" >> .env
 echo "INIT_PASSWORD='$INIT_PASSWORD'" >> .env
 
-echo "Your credentials are: (admin, $PASS)"
+echo "Your initial credentials are: (admin, $INIT_PASSWORD)"
 echo "Write it down! You will not get a second chance to look at it."
 
 mkdir -p traefik/
