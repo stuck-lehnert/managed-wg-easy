@@ -29,6 +29,9 @@ echo "PASSWORD_HASH='$HASH'" >> .env
 echo "Your generated password is $PASS"
 echo "Write it down! You will not get a second chance to look at it."
 
+mkdir -p traefik/
+touch traefik/acme.json && chmod 600 traefik/acme.json
+
 echo
 echo -e "To start your service, run \e[1mdocker compose up -d\e[0m"
 
