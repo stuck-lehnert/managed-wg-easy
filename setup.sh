@@ -6,8 +6,8 @@ set -e
 
 echo "apt-get update"
 sudo apt-get update &> /dev/null
-echo "apt-get install -y docker.io docker-compose-v2 whois wamerican-small"
-sudo apt-get install -y docker.io docker-compose-v2 whois wamerican-small &> /dev/null
+echo "apt-get install -y docker.io docker-buildx docker-compose-v2 whois wamerican-small"
+sudo apt-get install -y docker.io docker-buildx docker-compose-v2 whois wamerican-small &> /dev/null
 echo
 
 echo "This is a guided setup script."
@@ -44,9 +44,9 @@ echo >> .env
 echo "LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL" >> .env
 echo >> .env
 echo "WG_EASY_USERNAME=$WG_EASY_USERNAME" >> .env
-echo "WG_EASY_PASSWORD=$WG_EASY_PASSWORD" >> .env
+echo "WG_EASY_PASSWORD='$WG_EASY_PASSWORD'" >> .env
 echo >> .env
-echo "REGISTRATION_HASH=$REGISTRATION_HASH" >> .env
+echo "REGISTRATION_HASH='$REGISTRATION_HASH'" >> .env
 
 
 echo "Starting service..."
