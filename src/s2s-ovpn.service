@@ -1,0 +1,13 @@
+[Unit]
+Description=Autostart Site-To-Site VPN
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/etc/s2s-vpn/vpn-connect.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+

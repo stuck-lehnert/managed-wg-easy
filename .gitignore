@@ -1,3 +1,4 @@
 .env
 traefik/
 wireguard/
+intune-setup.ps1
