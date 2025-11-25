@@ -28,7 +28,7 @@ sudo mkdir -p /etc/s2s-ovpn
 echo "$USERNAME" > /etc/openvpn/s2s-auth.txt
 echo "$PASSWORD" >> /etc/openvpn/s2s-auth.txt
 
-cp "$OVPN_CONF_PATH" /etc/openvpn/s2s-config.opvn
+cp "$OVPN_CONF_PATH" /etc/openvpn/s2s-config.ovpn
 sed -i '/auth-user-pass/d' /etc/openvpn/s2s-config.ovpn
 echo >> /etc/openvpn/s2s-config.ovpn
 echo "auth-user-pass /etc/openvpn/s2s-auth.txt" >> /etc/openvpn/s2s-config.ovpn
