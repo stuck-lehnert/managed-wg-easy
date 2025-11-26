@@ -73,7 +73,7 @@ echo "Your registration url is https://$FQDN/registration/issue.php?token=$REGIS
 echo "Write it down! You will not get a second chance to look at it."
 
 cp intune-setup.in.ps1 intune-setup.ps1
-sed -i "s/{{SERVICE_FQDN}}/$SERVICE_FQDN/g" intune-setup.ps1
+sed -i "s/{{SERVICE_FQDN}}/$FQDN/g" intune-setup.ps1
 sed -i "s/{{REGISTRATION_TOKEN}}/$REGISTRATION_TOKEN/g" intune-setup.ps1
 
 

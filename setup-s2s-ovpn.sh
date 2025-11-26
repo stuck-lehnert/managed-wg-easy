@@ -28,10 +28,17 @@ sudo mkdir -p /etc/s2s-ovpn
 echo "$USERNAME" > /etc/openvpn/s2s-auth.txt
 echo "$PASSWORD" >> /etc/openvpn/s2s-auth.txt
 
-cp "$OVPN_CONF_PATH" /etc/openvpn/s2s-config.ovpn
-sed -i '/auth-user-pass/d' /etc/openvpn/s2s-config.ovpn
-echo >> /etc/openvpn/s2s-config.ovpn
-echo "auth-user-pass /etc/openvpn/s2s-auth.txt" >> /etc/openvpn/s2s-config.ovpn
+cp "$OVPN_CONF_PATH" /etc/openvpn/s2s-config.conf
+sed -i '/auth-user-pass/d' /etc/openvpn/s2s-config.conf
+echo >> /etc/openvpn/s2s-config.conf
+echo "auth-user-pass /etc/openvpn/s2s-auth.txt" >> /etc/openvpn/s2s-config.conf
+echo "resolv-retry infinite" >> /etc/openvpn/s2s-config.conf
+echo "auth-retry nointeract" >> /etc/openvpn/s2s-config.conf
+echo "keepalive 10 60" >> /etc/openvpn/s2s-config.conf
+echo "pull-filter ignore \"redirect-gateway\"" >> /etc/openvpn/s2s-config.conf
+echo "persist-key" >> /etc/openvpn/s2s-config.conf
+echo "persist-tun" >> /etc/openvpn/s2s-config.conf
+echo "inactive 0" >> /etc/openvpn/s2s-config.conf
 
 systemctl enable openvpn@s2s-config --now
 

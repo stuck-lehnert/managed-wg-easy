@@ -2,3 +2,8 @@
 traefik/
 wireguard/
 intune-setup.ps1
+intune-actuator.ps1
+
+*.apc
+*.ovpn
+*-creds.txt
