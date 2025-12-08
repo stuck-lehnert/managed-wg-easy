@@ -15,14 +15,22 @@ function Is-InLocalIntranet {
 		-or (`$ethernetAdapters | ? { "`$(`$_.IPv4DefaultGateway.NextHop)" -eq '$EthernetGateway' }).Count
 }
 
+function Is-WireGuardActive {
+	`$ipAdapters = Get-NetIPConfiguration | ? { `$_.NetAdapter.Status -eq 'Up' }
+	return -not (-not (`$ipAdapters | ? { `$_.InterfaceAlias -eq '$ServiceFQDN' -and `$_.IPv4Address }).Count)
+}
+
 if (Is-InLocalIntranet) {
-	& 'C:\Program Files\WireGuard\wireguard.exe' /uninstalltunnelservice '$ServiceFQDN'
+	try { & 'C:\Program Files\WireGuard\wireguard.exe' /uninstalltunnelservice '$ServiceFQDN' } catch {}
+	try { Get-Process wireguard | Stop-Process -Force -ErrorAction SilentlyContinue } catch {}
 } else {
-	& 'C:\Program Files\WireGuard\wireguard.exe' /installtunnelservice 'C:\Program Files\WireGuard\Config\$ServiceFQDN.conf'
+	try {
+		if (-not (Is-WireGuardActive)) {
+			& 'C:\Program Files\WireGuard\wireguard.exe' /installtunnelservice 'C:\Program Files\WireGuard\Config\$ServiceFQDN.conf'
+		}
+	} catch {}
 }
 "@
-
-
 
 Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
 
@@ -33,7 +41,7 @@ $action = New-ScheduledTaskAction -Execute powershell.exe `
 	-Argument "-NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$ScriptPath`""
 
 $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) `
-	-RepetitionInterval (New-TimeSpan -Minutes 2)
+	-RepetitionInterval (New-TimeSpan -Minutes 1)
 
 $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 

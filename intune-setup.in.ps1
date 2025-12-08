@@ -27,6 +27,3 @@ Write-Output "Downloading WireGuard configuration..."
 New-Item -ItemType Directory -Force -Path $configDir
 Invoke-WebRequest -Uri $configUrl -OutFile $configPath -UseBasicParsing
 
-& 'C:\Program Files\WireGuard\WireGuard.exe' /installtunnelservice $configPath
-Write-Output "WireGuard configuration ready!"
-
